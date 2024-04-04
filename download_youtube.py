@@ -5,15 +5,21 @@ from pytube import Playlist, YouTube
 
 
 def Download_video(url):
-    YouTube(url).streams.get_highest_resolution().download('Output')
-
+    try:
+        YouTube(url).streams.get_highest_resolution().download('Output')
+    except:
+        print(f"Falha a baixar o video")
     
 def Download_Playlist_video(url):
     playlist = Playlist(url)
-
+   
     for video in playlist.videos:
-        video.streams.get_highest_resolution().download('Output')
-
+        try:
+            video.streams.get_highest_resolution().download('Output')
+            print(f'video {video.title} foi baixado')
+        except:
+            # Código para lidar com o erro de restrição de idade
+            print(f"Falha a baixar o video {video.title}")
 
 def Download_Playlist_Music(url):
 
@@ -24,15 +30,18 @@ def Download_Playlist_Music(url):
 
     # physically downloading the audio track
     for video in playlist.videos:
-        audioStream = video.streams.get_by_itag(YOUTUBE_STREAM_AUDIO)
-        audioStream.download('Output')
-
+        try:
+            audioStream = video.streams.get_by_itag(YOUTUBE_STREAM_AUDIO)
+            audioStream.download('Output')
+        except:
+            print(f"Falha a baixar o audio {video.title}")
 
 def Download_Music(url):
-
-    YouTube(url).streams.get_audio_only().download('Output')
-
-
+    try:
+        YouTube(url).streams.get_audio_only().download('Output')
+    except:
+        print('Falha a baixar o audio')
+        
 def comeca():
     url= url_entry.get()
     escolha = nivel_var.get()
