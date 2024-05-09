@@ -1,3 +1,4 @@
+import os
 import re
 import tkinter as tk
 
@@ -6,7 +7,7 @@ from pytube import Playlist, YouTube
 
 def Download_video(url):
     try:
-        YouTube(url).streams.get_highest_resolution().download('Output')
+        YouTube(url).streams.get_highest_resolution().download('Video_Output')
     except:
         print(f"Falha a baixar o video")
     
@@ -15,7 +16,7 @@ def Download_Playlist_video(url):
    
     for video in playlist.videos:
         try:
-            video.streams.get_highest_resolution().download('Output')
+            video.streams.get_highest_resolution().download('Video_Output')
             print(f'video {video.title} foi baixado')
         except:
             # Código para lidar com o erro de restrição de idade
@@ -32,13 +33,15 @@ def Download_Playlist_Music(url):
     for video in playlist.videos:
         try:
             audioStream = video.streams.get_by_itag(YOUTUBE_STREAM_AUDIO)
-            audioStream.download('Output')
+            audioStream.download('Audio_Output')
         except:
             print(f"Falha a baixar o audio {video.title}")
 
 def Download_Music(url):
     try:
-        YouTube(url).streams.get_audio_only().download('Output')
+        yt = YouTube(url)
+        yt.streams.get_audio_only().download('Audio_Output')
+        nome = yt.title
     except:
         print('Falha a baixar o audio')
         
@@ -54,7 +57,36 @@ def comeca():
         Download_Music(url)
     elif escolha=="4":
         Download_Playlist_Music(url)
+
+    convert_to_mp3()
+
+
+
+def convert_to_mp3():
+    # Verifica se o diretório de entrada existe
+    input_folder = 'Audio_Output'
+    if not os.path.isdir(input_folder):
+        print("O diretório de entrada não existe.")
+        return
     
+    # Percorre todos os arquivos na pasta de entrada
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".mp4"):
+            # Define o caminho completo para o arquivo de entrada
+            input_file = os.path.join(input_folder, filename)
+            
+            # Separa o nome do arquivo da extensão
+            file_name, _ = os.path.splitext(input_file)
+            
+            # Define o novo nome de arquivo com a nova extensão
+            output_file = file_name + ".mp3"
+            
+            # Renomeia o arquivo
+            os.rename(input_file, output_file)
+            print(f"Arquivo renomeado: {output_file}")
+
+
+
 
 
 janela = tk.Tk()
